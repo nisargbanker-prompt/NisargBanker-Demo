@@ -33,22 +33,5 @@ interface MyApi {
     @GET("users/{userId}")
     suspend fun userDetails(@Path("userId") userId: String) : Response<UserDetailsResponse>
 
-  /*  companion object{
-        @Inject lateinit var networkConnectionInterceptor: NetworkConnectionInterceptor
-        operator fun invoke() : MyApi {
-
-            val okkHttpclient = OkHttpClient.Builder()
-                .addInterceptor(networkConnectionInterceptor)
-                .build()
-
-            return Retrofit.Builder()
-                .client(okkHttpclient)
-                .baseUrl("https://reqres.in/api/")
-                .addConverterFactory(GsonConverterFactory.create())
-                .build()
-                .create(MyApi::class.java)
-        }
-    }*/
-
 }
 

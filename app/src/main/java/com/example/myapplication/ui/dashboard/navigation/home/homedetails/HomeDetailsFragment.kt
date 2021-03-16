@@ -7,11 +7,9 @@ import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.observe
 import com.example.myapplication.R
 import com.example.myapplication.databinding.FragmentHomeDetailsBinding
-import com.example.myapplication.ui.base.ViewModelFactory
 import com.example.myapplication.ui.dashboard.navigation.home.homedetails.data.HomeDetailsViewModel
 import com.example.myapplication.util.getProgressDrawable
 import com.example.myapplication.util.loadImage
