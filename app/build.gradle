@@ -74,8 +74,8 @@ dependencies {
     implementation 'androidx.navigation:navigation-ui-ktx:2.1.0'
 
     //Kotlin Coroutines
-    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.3.3"
-    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.3"
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.4.2"
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.4.2"
 
     //Shared Preferences
     implementation "androidx.preference:preference-ktx:1.1.1"

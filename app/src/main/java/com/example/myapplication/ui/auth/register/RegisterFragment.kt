@@ -1,19 +1,22 @@
 package com.example.myapplication.ui.auth.register
 
+import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.observe
+import androidx.lifecycle.lifecycleScope
 import com.example.myapplication.R
 import com.example.myapplication.databinding.FragmentRegisterBinding
 import com.example.myapplication.ui.auth.register.data.RegisterViewModel
+import com.example.myapplication.ui.dashboard.MainActivity
+import com.example.myapplication.util.ApiState
+import com.example.myapplication.util.toast
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.collect
 
 @AndroidEntryPoint
 class RegisterFragment : Fragment() {
@@ -27,24 +30,33 @@ class RegisterFragment : Fragment() {
     ): View? {
         binding =
             DataBindingUtil.inflate(inflater, R.layout.fragment_register, container, false)
-        //viewModel = ViewModelProvider(this, factory).get(RegisterViewModel::class.java)
         binding.lifecycleOwner = this
         binding.viewmodel = viewModel
-        observeResponseData()
-        observeErrorData()
+        observeStateFlow()
         return binding.root
     }
 
-    private fun observeResponseData() {
-        viewModel.responseFromNetwork.observe(viewLifecycleOwner) {
-            Log.e("responseFromNetwork" , viewModel.responseFromNetwork.value!!.token!!)
-            Toast.makeText(this.requireContext(), viewModel.responseFromNetwork.value!!.token, Toast.LENGTH_SHORT).show()
+    private fun observeStateFlow() {
+        lifecycleScope.launchWhenStarted {
+            viewModel.registerUiState.collect {
+                when(it){
+                    is ApiState.Success -> {
+                        viewModel.isLoading.value = false
+                        if (it.authResponse != null){
+                            toast(this@RegisterFragment.requireContext(), "Register Success")
+                            startActivity(Intent(this@RegisterFragment.context, MainActivity::class.java))
+                        }
+                    }
+                    is ApiState.Error -> {
+                        viewModel.isLoading.value = false
+                    }
+                    is ApiState.Loading -> {
+                        viewModel.isLoading.value = true
+                    }
+                    else -> Unit
+                }
+            }
         }
     }
 
-    private fun observeErrorData() {
-        viewModel.errorFromNetwork.observe(
-            viewLifecycleOwner
-        ) { s -> viewModel.errorFromNetwork }
-    }
 }

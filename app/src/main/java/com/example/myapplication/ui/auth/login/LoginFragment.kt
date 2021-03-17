@@ -8,12 +8,15 @@ import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.observe
+import androidx.lifecycle.lifecycleScope
 import com.example.myapplication.R
 import com.example.myapplication.databinding.FragmentLoginBinding
 import com.example.myapplication.ui.auth.login.data.LoginViewModel
 import com.example.myapplication.ui.dashboard.MainActivity
+import com.example.myapplication.util.ApiState
+import com.example.myapplication.util.toast
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.collect
 
 @AndroidEntryPoint
 class LoginFragment : Fragment() {
@@ -29,24 +32,31 @@ class LoginFragment : Fragment() {
             DataBindingUtil.inflate(inflater, R.layout.fragment_login, container, false)
         binding.lifecycleOwner = this
         binding.viewmodel = viewModel
-        observeResponseData()
-        observeErrorData()
+        obeserveStateFlow()
         return binding.root
     }
 
-    private fun observeResponseData() {
-        viewModel.responseFromNetwork.observe(viewLifecycleOwner) {
-            if (viewModel.responseFromNetwork.value != null){
-                startActivity(Intent(this.requireContext(), MainActivity::class.java))
-                viewModel.responseFromNetwork.value = null
+    private fun obeserveStateFlow() {
+        lifecycleScope.launchWhenStarted {
+            viewModel.loginUiState.collect {
+                when(it){
+                    is ApiState.Success -> {
+                        viewModel.isLoading.value = false
+                        if (it.authResponse != null){
+                            toast(this@LoginFragment.requireContext(), "Login Success")
+                            startActivity(Intent(this@LoginFragment.context, MainActivity::class.java))
+                        }
+                    }
+                    is ApiState.Error -> {
+                        viewModel.isLoading.value = false
+                    }
+                    is ApiState.Loading -> {
+                        viewModel.isLoading.value = true
+                    }
+                    else -> Unit
+                }
             }
-            //this.requireActivity().toast(viewModel.responseFromNetwork.value!!.token!!)
         }
     }
 
-    private fun observeErrorData() {
-        viewModel.errorFromNetwork.observe(
-            viewLifecycleOwner
-        ) { s -> viewModel.errorFromNetwork }
-    }
 }

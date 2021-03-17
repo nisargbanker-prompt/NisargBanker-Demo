@@ -7,11 +7,13 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.Navigation
-import com.example.myapplication.data.network.responses.AuthResponse
 import com.example.myapplication.data.repositories.UserRepository
 import com.example.myapplication.util.ApiException
+import com.example.myapplication.util.ApiState
 import com.example.myapplication.util.NoInternetException
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
@@ -25,26 +27,26 @@ class RegisterViewModel @ViewModelInject constructor(
     var isLoading: MutableLiveData<Boolean> = MutableLiveData<Boolean>().apply {
         value = false
     }
-    var responseFromNetwork: MutableLiveData<AuthResponse> = MutableLiveData<AuthResponse>()
-    var errorFromNetwork = MutableLiveData<String>()
+
+    private val _registerUiState = MutableStateFlow<ApiState>(ApiState.Empty)
+    val registerUiState: StateFlow<ApiState> = _registerUiState
 
     fun onRegisterHandler(view: View) {
-        isLoading.value = true
         viewModelScope.launch {
             try {
+                _registerUiState.value = ApiState.Loading
                 val authResponse = userRegister("eve.holt@reqres.in", "cityslicka")
-                isLoading.value = false
                 if (authResponse.token != null) {
-                    responseFromNetwork.value = authResponse
+                    _registerUiState.value = ApiState.Success(authResponse)
                 } else {
-                    errorFromNetwork.value = authResponse.error
+                    _registerUiState.value = ApiState.Error(authResponse.error.toString())
                 }
             } catch (e: ApiException) {
                 e.printStackTrace()
-                isLoading.value = false
+                _registerUiState.value = ApiState.Error(e.printStackTrace().toString())
             } catch (e: NoInternetException) {
                 e.printStackTrace()
-                isLoading.value = false
+                _registerUiState.value = ApiState.Error(e.printStackTrace().toString())
             }
         }
     }
