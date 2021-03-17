@@ -14,6 +14,7 @@ import com.example.myapplication.databinding.FragmentLoginBinding
 import com.example.myapplication.ui.auth.login.data.LoginViewModel
 import com.example.myapplication.ui.dashboard.MainActivity
 import com.example.myapplication.util.ApiState
+import com.example.myapplication.util.ValidationState
 import com.example.myapplication.util.toast
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collect
@@ -32,12 +33,29 @@ class LoginFragment : Fragment() {
             DataBindingUtil.inflate(inflater, R.layout.fragment_login, container, false)
         binding.lifecycleOwner = this
         binding.viewmodel = viewModel
-        obeserveStateFlow()
+        observeValidation()
         return binding.root
+    }
+
+    private fun observeValidation(){
+        lifecycleScope.launchWhenStarted {
+            viewModel.validationState.collect {
+                when(it){
+                    is ValidationState.Success -> {
+                        obeserveStateFlow()
+                    }
+                    is ValidationState.Error -> {
+                        toast(this@LoginFragment.requireContext(), it.message)
+                    }
+                    else -> Unit
+                }
+            }
+        }
     }
 
     private fun obeserveStateFlow() {
         lifecycleScope.launchWhenStarted {
+
             viewModel.loginUiState.collect {
                 when(it){
                     is ApiState.Success -> {
@@ -48,6 +66,7 @@ class LoginFragment : Fragment() {
                         }
                     }
                     is ApiState.Error -> {
+                        toast(this@LoginFragment.requireContext(), it.message)
                         viewModel.isLoading.value = false
                     }
                     is ApiState.Loading -> {

@@ -75,7 +75,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="24dp"
                 android:background="@drawable/square_background"
-                android:onClick="@{viewmodel::onRegisterHandler}"
+                android:onClick="@{viewmodel::validation}"
                 android:text="REGISTER"
                 android:textColor="@color/white"
                 app:layout_constraintEnd_toEndOf="parent"

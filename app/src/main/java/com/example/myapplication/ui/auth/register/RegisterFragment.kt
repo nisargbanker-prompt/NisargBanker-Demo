@@ -14,6 +14,7 @@ import com.example.myapplication.databinding.FragmentRegisterBinding
 import com.example.myapplication.ui.auth.register.data.RegisterViewModel
 import com.example.myapplication.ui.dashboard.MainActivity
 import com.example.myapplication.util.ApiState
+import com.example.myapplication.util.ValidationState
 import com.example.myapplication.util.toast
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collect
@@ -32,8 +33,24 @@ class RegisterFragment : Fragment() {
             DataBindingUtil.inflate(inflater, R.layout.fragment_register, container, false)
         binding.lifecycleOwner = this
         binding.viewmodel = viewModel
-        observeStateFlow()
+        observeValidation()
         return binding.root
+    }
+
+    private fun observeValidation(){
+        lifecycleScope.launchWhenStarted {
+            viewModel.validationState.collect {
+                when(it){
+                    is ValidationState.Success -> {
+                        observeStateFlow()
+                    }
+                    is ValidationState.Error -> {
+                        toast(this@RegisterFragment.requireContext(), it.message)
+                    }
+                    else -> Unit
+                }
+            }
+        }
     }
 
     private fun observeStateFlow() {
@@ -48,6 +65,7 @@ class RegisterFragment : Fragment() {
                         }
                     }
                     is ApiState.Error -> {
+                        toast(this@RegisterFragment.requireContext(), it.message)
                         viewModel.isLoading.value = false
                     }
                     is ApiState.Loading -> {

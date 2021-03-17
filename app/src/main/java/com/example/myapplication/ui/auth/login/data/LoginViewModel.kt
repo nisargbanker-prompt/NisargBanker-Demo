@@ -12,6 +12,7 @@ import com.example.myapplication.data.repositories.UserRepository
 import com.example.myapplication.util.ApiException
 import com.example.myapplication.util.ApiState
 import com.example.myapplication.util.NoInternetException
+import com.example.myapplication.util.ValidationState
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -31,6 +32,26 @@ class LoginViewModel @ViewModelInject constructor(
     private val _loginUiState = MutableStateFlow<ApiState>(ApiState.Empty)
     val loginUiState: StateFlow<ApiState> = _loginUiState
 
+    private val _validationState = MutableStateFlow<ValidationState>(ValidationState.Empty)
+    val validationState: StateFlow<ValidationState> = _validationState
+
+    fun validation(view: View){
+        var validationState: ValidationState = ValidationState.Empty
+        validationState = when {
+            email.get() == "" -> {
+                ValidationState.Error("Please insert email")
+            }
+            password.get() == "" -> {
+                ValidationState.Error("Please enter password")
+            }
+            else -> {
+                onLoginHandler(view)
+                ValidationState.Success
+            }
+        }
+        _validationState.value = validationState
+    }
+
     fun onLoginHandler(view: View) {
         viewModelScope.launch {
             try {
@@ -43,10 +64,10 @@ class LoginViewModel @ViewModelInject constructor(
                 }
             } catch (e: ApiException) {
                 e.printStackTrace()
-                _loginUiState.value = ApiState.Error(e.toString())
+                _loginUiState.value = ApiState.Error(e.message.toString())
             } catch (e: NoInternetException) {
                 e.printStackTrace()
-                _loginUiState.value = ApiState.Error(e.toString())
+                _loginUiState.value = ApiState.Error(e.message.toString())
             }
         }
     }
