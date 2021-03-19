@@ -1,5 +1,7 @@
 package com.example.myapplication.ui.dashboard.navigation.home.data
 
+import androidx.room.Entity
+import androidx.room.PrimaryKey
 import com.google.gson.annotations.SerializedName
 
 data class UserResponse(
@@ -32,11 +34,13 @@ data class Support(
 	val url: String? = null
 )
 
+@Entity(tableName = "users")
 data class DataItem(
 
 	@field:SerializedName("last_name")
 	val lastName: String? = null,
 
+	@PrimaryKey
 	@field:SerializedName("id")
 	val id: Int? = null,
 

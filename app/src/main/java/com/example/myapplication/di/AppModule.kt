@@ -1,8 +1,10 @@
 package com.example.myapplication.di
 
 import android.content.Context
+import com.example.myapplication.data.local.AppDatabase
 import com.example.myapplication.data.network.MyApi
 import com.example.myapplication.data.network.NetworkConnectionInterceptor
+import com.example.myapplication.data.network.remote.UserRemoteDataSource
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -35,5 +37,18 @@ object AppModule {
             .addConverterFactory(GsonConverterFactory.create())
             .build()
             .create(MyApi::class.java)
+
+    @Singleton
+    @Provides
+    fun provideUserRemoteDataSource(myApi: MyApi) = UserRemoteDataSource(myApi)
+
+    @Singleton
+    @Provides
+    fun provideDatabase(@ApplicationContext appContext: Context) = AppDatabase.getDatabase(appContext)
+
+    @Singleton
+    @Provides
+    fun provideCharacterDao(db: AppDatabase) = db.characterDao()
+
 
 }

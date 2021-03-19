@@ -10,19 +10,9 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 class HomeViewModel @ViewModelInject constructor(private val repository: UserRepository) : ViewModel() {
-
     var isLoading: MutableLiveData<Boolean> = MutableLiveData<Boolean>()
-    var responseFromNetwork: MutableLiveData<UserResponse> = MutableLiveData<UserResponse>()
-    var errorFromNetwork = MutableLiveData<String>()
-
+    val characters = repository.getUsers()
     init {
         isLoading.value = true
-        viewModelScope.launch {
-            val authResponse = users("1")
-            responseFromNetwork.value =  authResponse
-            isLoading.value = false
-        }
     }
-
-    suspend fun users(pageNumber: String) = withContext(Dispatchers.IO) { repository.users(pageNumber) }
 }
