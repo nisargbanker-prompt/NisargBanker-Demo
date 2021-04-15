@@ -9,23 +9,22 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
-import androidx.lifecycle.observe
 import androidx.navigation.Navigation
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.myapplication.R
 import com.example.myapplication.data.callback.RecyclerViewClickListener
 import com.example.myapplication.databinding.FragmentHomeBinding
-import com.example.myapplication.ui.dashboard.navigation.home.data.DataItem
 import com.example.myapplication.ui.dashboard.navigation.home.data.HomeUserAdapter
 import com.example.myapplication.ui.dashboard.navigation.home.data.HomeViewModel
 import com.example.myapplication.util.Resource
+import com.example.myapplication.util.autoCleared
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class HomeFragment : Fragment(),  RecyclerViewClickListener {
 
     private val viewModel: HomeViewModel by viewModels()
-    private lateinit var binding: FragmentHomeBinding
+    private var binding: FragmentHomeBinding by autoCleared()
 
     private val listAdapter = HomeUserAdapter(arrayListOf(), this)
 

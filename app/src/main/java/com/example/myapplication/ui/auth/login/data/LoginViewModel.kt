@@ -52,7 +52,7 @@ class LoginViewModel @ViewModelInject constructor(
         _validationState.value = validationState
     }
 
-    fun onLoginHandler(view: View) {
+    private fun onLoginHandler(view: View) {
         viewModelScope.launch {
             try {
                 _loginUiState.value = ApiState.Loading
@@ -76,7 +76,7 @@ class LoginViewModel @ViewModelInject constructor(
         Navigation.findNavController(view).navigate(R.id.action_loginFragment_to_registerFragment)
     }
 
-    suspend fun userLogin(
+    private suspend fun userLogin(
         email: String,
         password: String
     ) = withContext(Dispatchers.IO) { repository.userLogin(email, password) }

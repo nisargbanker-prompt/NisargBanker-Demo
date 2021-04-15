@@ -11,6 +11,6 @@ class UserRemoteDataSource @Inject constructor(
         getResult{ myApi.users( pageNumber)}
     }
 
-    suspend fun getCharacters(pageNumber: String) = getResult { myApi.users( pageNumber)}
+    suspend fun getUsers(pageNumber: String) = getResult { myApi.users( pageNumber)}
 
 }

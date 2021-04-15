@@ -34,7 +34,7 @@ class UserRepository @Inject constructor(
 
     fun getUsers() = performGetOperation(
         databaseQuery = { localDataSource.getAllUsers() },
-        networkCall = { userRemoteDataSource.getCharacters("1") },
+        networkCall = { userRemoteDataSource.getUsers("1") },
         saveCallResult = { localDataSource.insertAll(it.data as List<DataItem>) }
     )
 
