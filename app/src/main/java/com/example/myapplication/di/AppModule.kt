@@ -1,6 +1,7 @@
 package com.example.myapplication.di
 
 import android.content.Context
+import com.example.myapplication.BuildConfig
 import com.example.myapplication.data.local.AppDatabase
 import com.example.myapplication.data.network.MyApi
 import com.example.myapplication.data.network.NetworkConnectionInterceptor
@@ -33,7 +34,7 @@ object AppModule {
                     .addInterceptor(networkConnectionInterceptor)
                     .build()
             )
-            .baseUrl("https://reqres.in/api/")
+            .baseUrl(BuildConfig.API_URL)
             .addConverterFactory(GsonConverterFactory.create())
             .build()
             .create(MyApi::class.java)

@@ -19,10 +19,12 @@ android {
         targetSdkVersion 30
         flavorDimensions "experience"
         productFlavors {
-            instant {
+            demo {
+                buildConfigField 'String', 'API_URL', '"https://reqres.in/api/"'
                 versionCode 1
             }
-            installed {
+            live {
+                buildConfigField 'String', 'API_URL', '\"https://url/pre/\"'
                 versionCode 2
             }
         }

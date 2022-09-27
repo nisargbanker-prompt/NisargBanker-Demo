@@ -21,12 +21,7 @@ class HomeUserAdapter(private val userList: ArrayList<DataItem>, private val lis
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) =
         UserViewHolder(
-            DataBindingUtil.inflate(
-                LayoutInflater.from(parent.context),
-                R.layout.item_user,
-                parent,
-                false
-            )
+            DataBindingUtil.inflate(LayoutInflater.from(parent.context), R.layout.item_user, parent, false)
         )
 
     override fun onBindViewHolder(holder: UserViewHolder, position: Int) {
